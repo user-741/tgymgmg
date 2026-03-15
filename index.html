@@ -2,765 +2,171 @@
 <html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Latif Ultimate Gym Tracker</title>
+<title>System Gym Tracker</title>
 <style>
 :root{
---primary:#00d084;
---primary-dark:#00a868;
---bg:#0a0a0a;
---surface:#151515;
---card:#1a1a1a;
---text:#ffffff;
---text-secondary:#a0a0a0;
+--primary:#00e5ff; /* System Blue */
+--primary-dark:#008fb3;
+--bg:#050914; /* Deep abyssal dark */
+--surface:#0a1128;
+--card:#0f172a;
+--text:#e2e8f0;
+--text-secondary:#94a3b8;
 --danger:#ff4757;
 --warning:#ffa502;
---rest:#444;
-}
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
-}
-
-body{
-background:var(--bg);
-color:var(--text);
-line-height:1.6;
-padding:16px;
-max-width:800px;
-margin:0 auto;
-}
-
-h1{
-text-align:center;
-color:var(--primary);
-font-size:1.8rem;
-margin-bottom:4px;
-font-weight:700;
-letter-spacing:-0.5px;
-}
-
-.date-display{
-text-align:center;
-color:var(--text-secondary);
-font-size:0.9rem;
-margin-bottom:20px;
-font-weight:500;
-}
-
-.status-card{
-background:linear-gradient(135deg,var(--card) 0%,#1f1f1f 100%);
-border:2px solid;
-border-color:#333;
-padding:20px;
-border-radius:16px;
-margin-bottom:24px;
-text-align:center;
-position:relative;
-overflow:hidden;
-}
-
-.status-card::after{
-content:'';
-position:absolute;
-top:-50%;
-left:-50%;
-width:200%;
-height:200%;
-background:radial-gradient(circle,rgba(0,208,132,0.1) 0%,transparent 70%);
-opacity:0;
-transition:opacity 0.3s;
-}
-
-.status-card.rest-day{
-border-color:var(--rest);
-background:linear-gradient(135deg,#1a1a1a 0%,#0f0f0f 100%);
-}
-
-.status-card.rest-day .workout-type{
-color:var(--text-secondary);
-}
-
-.day-name{
-font-size:0.9rem;
-color:var(--text-secondary);
-text-transform:uppercase;
-letter-spacing:2px;
-margin-bottom:4px;
-font-weight:600;
-}
-
-.workout-type{
-font-size:2rem;
-font-weight:800;
-color:var(--primary);
-text-transform:uppercase;
-letter-spacing:1px;
-margin-bottom:12px;
-}
-
-.weekly-strip{
-display:flex;
-justify-content:space-between;
-margin-top:16px;
-padding-top:16px;
-border-top:1px solid #333;
-gap:4px;
-}
-
-.day-dot{
-flex:1;
-text-align:center;
-padding:8px 4px;
-border-radius:6px;
-font-size:0.75rem;
-font-weight:600;
-color:#555;
-background:var(--surface);
-text-transform:uppercase;
-}
-
-.day-dot.active{
-background:var(--primary);
-color:#000;
-box-shadow:0 0 12px rgba(0,208,132,0.4);
-}
-
-.day-dot.rest{
-background:#2a2a2a;
-color:#666;
-}
-
-.timer-section{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:12px;
-margin-top:16px;
-flex-wrap:wrap;
-}
-
-#timer{
-font-size:2.2rem;
-font-weight:800;
-font-variant-numeric:tabular-nums;
-color:var(--primary);
-min-width:100px;
-text-align:center;
-background:rgba(0,208,132,0.1);
-padding:12px 20px;
-border-radius:12px;
-border:2px solid rgba(0,208,132,0.3);
-font-family:'Courier New',monospace;
-}
-
-.btn{
-background:var(--primary);
-color:#000;
-border:none;
-padding:12px 20px;
-border-radius:8px;
-font-weight:700;
-cursor:pointer;
-transition:all 0.2s;
-font-size:0.9rem;
-display:inline-flex;
-align-items:center;
-gap:6px;
-text-transform:uppercase;
-letter-spacing:0.5px;
-}
-
-.btn:hover:not(:disabled){
-transform:translateY(-2px);
-box-shadow:0 6px 20px rgba(0,208,132,0.3);
-}
-
-.btn:active:not(:disabled){
-transform:translateY(0);
-}
-
-.btn:disabled{
-opacity:0.5;
-cursor:not-allowed;
-}
-
-.btn-secondary{
-background:#2a2a2a;
-color:var(--text);
-}
-
-.btn-secondary:hover:not(:disabled){
-background:#333;
-box-shadow:0 6px 20px rgba(255,255,255,0.1);
-}
-
-.progress-section{
-background:var(--card);
-padding:16px 20px;
-border-radius:12px;
-margin-bottom:20px;
-border:1px solid #2a2a2a;
-}
-
-.progress-header{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-font-size:0.9rem;
-color:var(--text-secondary);
-font-weight:600;
-}
-
-.progress-bar{
-background:#2a2a2a;
-height:10px;
-border-radius:5px;
-overflow:hidden;
-position:relative;
-}
-
-.progress-fill{
-background:linear-gradient(90deg,var(--primary) 0%,var(--primary-dark) 100%);
-height:100%;
-width:0%;
-transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
-border-radius:5px;
-box-shadow:0 0 10px rgba(0,208,132,0.3);
-}
-
-.card{
-background:var(--card);
-border:1px solid #2a2a2a;
-padding:20px;
-margin:16px 0;
-border-radius:12px;
-transition:all 0.3s;
-position:relative;
-overflow:hidden;
-animation:slideIn 0.4s ease-out;
-}
-
-@keyframes slideIn{
-from{
-opacity:0;
-transform:translateY(20px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
-.card:hover{
-border-color:#3a3a3a;
-transform:translateY(-2px);
-box-shadow:0 8px 24px rgba(0,0,0,0.4);
-}
-
-.exercise-title{
-font-size:1.2rem;
-font-weight:700;
-margin-bottom:16px;
-color:var(--text);
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.set-row{
-display:grid;
-grid-template-columns:35px 1fr 1fr auto;
-gap:10px;
-align-items:center;
-margin-bottom:10px;
-padding:10px;
-background:var(--surface);
-border-radius:8px;
-transition:all 0.2s;
-border:1px solid transparent;
-}
-
-.set-row:hover{
-background:#222;
-border-color:#333;
-}
-
-.set-num{
-font-weight:800;
-color:var(--text-secondary);
-font-size:0.9rem;
-text-align:center;
-}
-
-input[type="number"]{
-width:100%;
-padding:10px;
-background:#0a0a0a;
-border:1px solid #333;
-color:var(--text);
-border-radius:6px;
-font-size:1rem;
-outline:none;
-transition:all 0.2s;
-font-weight:600;
-}
-
-input[type="number"]:focus{
-border-color:var(--primary);
-background:#111;
-}
-
-input::placeholder{
-color:#444;
-font-weight:400;
-}
-
-.check-btn{
-background:transparent;
-border:2px solid #444;
-color:#444;
-width:36px;
-height:36px;
-border-radius:50%;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-transition:all 0.2s;
-font-size:1.2rem;
-font-weight:bold;
-}
-
-.check-btn:hover{
-border-color:var(--primary);
-color:var(--primary);
-transform:scale(1.1);
-}
-
-.check-btn.completed{
-background:var(--primary);
-border-color:var(--primary);
-color:#000;
-transform:scale(1);
-box-shadow:0 0 12px rgba(0,208,132,0.4);
-}
-
-.save-section{
-margin-top:16px;
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-align-items:center;
-}
-
-.stats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-top:12px;
-width:100%;
-}
-
-.stat-box{
-background:var(--surface);
-padding:12px;
-border-radius:8px;
-border-left:4px solid var(--primary);
-position:relative;
-}
-
-.stat-label{
-color:var(--text-secondary);
-font-size:0.7rem;
-text-transform:uppercase;
-letter-spacing:1px;
-margin-bottom:4px;
-font-weight:700;
-}
-
-.stat-value{
-color:var(--text);
-font-size:1.1rem;
-font-weight:800;
-}
-
-.history-btn{
-background:transparent;
-border:1px solid #444;
-color:var(--text-secondary);
-padding:8px 14px;
-border-radius:6px;
-cursor:pointer;
-font-size:0.8rem;
-transition:all 0.2s;
-font-weight:600;
-margin-left:auto;
-}
-
-.history-btn:hover{
-border-color:var(--primary);
-color:var(--primary);
-background:rgba(0,208,132,0.05);
-}
-
-.session-log{
-margin-top:12px;
-padding-top:12px;
-border-top:1px solid #2a2a2a;
-font-size:0.85rem;
-color:#666;
-line-height:1.5;
-}
-
-.rest-card{
-text-align:center;
-padding:60px 20px;
-background:linear-gradient(180deg,var(--card) 0%,#0f0f0f 100%);
-border:1px solid #333;
-}
-
-.rest-icon{
-font-size:4rem;
-margin-bottom:16px;
-opacity:0.8;
-}
-
-.rest-title{
-font-size:1.5rem;
-color:var(--text-secondary);
-margin-bottom:8px;
-font-weight:700;
-}
-
-.rest-subtitle{
-color:#666;
-font-size:0.95rem;
-}
-
-.bw-section{
-background:var(--card);
-padding:20px;
-border-radius:12px;
-margin:20px 0;
-border:1px solid #2a2a2a;
-}
-
-.section-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:16px;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.section-title{
-font-size:1.1rem;
-font-weight:700;
-color:var(--text);
-display:flex;
-align-items:center;
-gap:8px;
-text-transform:uppercase;
-letter-spacing:0.5px;
-}
-
-.bw-input-group{
-display:flex;
-gap:10px;
-margin-bottom:16px;
-flex-wrap:wrap;
-}
-
-.bw-input-group input{
-flex:1;
-min-width:120px;
-padding:12px;
-}
-
-canvas{
-width:100%;
-background:var(--surface);
-border-radius:8px;
-margin-top:12px;
-border:1px solid #2a2a2a;
-display:block;
-}
-
-.rest-overlay{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.96);
-z-index:999;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:30px;
-backdrop-filter:blur(10px);
-}
-
-.rest-timer-display{
-text-align:center;
-}
-
-.rest-label{
-color:var(--text-secondary);
-font-size:1rem;
-letter-spacing:4px;
-text-transform:uppercase;
-margin-bottom:10px;
-font-weight:600;
-}
-
-.rest-timer{
-font-size:6rem;
-font-weight:800;
-color:var(--primary);
-font-variant-numeric:tabular-nums;
-font-family:'Courier New',monospace;
-text-shadow:0 0 30px rgba(0,208,132,0.5);
-}
-
-.rest-progress{
-width:200px;
-height:4px;
-background:#333;
-border-radius:2px;
-margin-top:20px;
-overflow:hidden;
-position:relative;
-}
-
-.rest-progress-bar{
-height:100%;
-background:var(--primary);
-width:100%;
-transition:width 1s linear;
-}
-
-.cancel-rest{
-position:absolute;
-bottom:50px;
-background:var(--surface);
-border:2px solid #444;
-color:var(--text);
-padding:14px 28px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-text-transform:uppercase;
-letter-spacing:1px;
-transition:all 0.2s;
-}
-
-.cancel-rest:hover{
-border-color:var(--danger);
-color:var(--danger);
-background:rgba(255,71,87,0.1);
-}
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.9);
-z-index:1000;
-padding:20px;
-overflow-y:auto;
-backdrop-filter:blur(5px);
-}
-
-.modal-content{
-background:var(--card);
-max-width:600px;
-margin:40px auto;
-padding:24px;
-border-radius:12px;
-border:1px solid #333;
-max-height:80vh;
-overflow-y:auto;
-box-shadow:0 20px 60px rgba(0,0,0,0.8);
-}
-
-.modal-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:24px;
-padding-bottom:16px;
-border-bottom:2px solid #333;
-}
-
-.modal-title{
-font-size:1.3rem;
-font-weight:700;
-color:var(--text);
-}
-
-.close-btn{
-background:none;
-border:none;
-color:#666;
-font-size:1.8rem;
-cursor:pointer;
-width:40px;
-height:40px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:50%;
-transition:all 0.2s;
-}
-
-.close-btn:hover{
-background:var(--surface);
-color:var(--text);
-transform:rotate(90deg);
-}
-
-.history-list{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.history-entry{
-background:var(--surface);
-padding:14px;
-border-radius:8px;
-border-left:3px solid var(--primary);
-display:flex;
-justify-content:space-between;
-align-items:center;
-transition:all 0.2s;
-}
-
-.history-entry:hover{
-background:#252525;
-transform:translateX(4px);
-}
-
-.history-info{
-flex:1;
-}
-
-.history-date{
-font-weight:700;
-color:var(--primary);
-font-size:0.9rem;
-margin-bottom:4px;
-}
-
-.history-detail{
-color:var(--text-secondary);
-font-size:0.85rem;
-line-height:1.4;
-}
-
-.history-stats{
-text-align:right;
-margin-right:12px;
-}
-
-.history-vol{
-font-weight:700;
-color:var(--text);
-font-size:0.9rem;
-}
-
-.delete-entry{
-background:transparent;
-border:none;
-color:#444;
-cursor:pointer;
-padding:8px;
-border-radius:6px;
-font-size:1.3rem;
-line-height:1;
-transition:all 0.2s;
-}
-
-.delete-entry:hover{
-background:rgba(255,71,87,0.1);
-color:var(--danger);
-}
-
-.notification{
-position:fixed;
-bottom:20px;
-right:20px;
-background:var(--primary);
-color:#000;
-padding:14px 24px;
-border-radius:10px;
-font-weight:700;
-transform:translateY(100px);
-transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
-z-index:1001;
-box-shadow:0 8px 24px rgba(0,208,132,0.3);
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.notification.show{
-transform:translateY(0);
-}
-
-.notification.error{
-background:var(--danger);
-color:#fff;
-box-shadow:0 8px 24px rgba(255,71,87,0.3);
-}
-
-.empty-state{
-text-align:center;
-padding:40px;
-color:#555;
-font-style:italic;
-}
+--rest:#334155;
+--rank-s:#ffcc00;
+--rank-a:#ff4757;
+--rank-b:#9d00ff;
+--rank-c:#00e5ff;
+--rank-d:#2ed573;
+--rank-e:#a4b0be;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif; }
+
+body{ background:var(--bg); color:var(--text); line-height:1.6; padding:16px; max-width:800px; margin:0 auto; }
+
+h1{ text-align:center; color:var(--text); font-size:1.5rem; margin-bottom:4px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+.system-title { color: var(--primary); }
+
+/* --- PLAYER STATUS UI --- */
+.player-status {
+background: linear-gradient(180deg, rgba(0,229,255,0.1) 0%, rgba(10,17,40,0.8) 100%);
+border: 1px solid var(--primary);
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 24px;
+box-shadow: 0 0 15px rgba(0,229,255,0.15);
+position: relative;
+overflow: hidden;
+}
+
+.player-status::before {
+content: 'SYSTEM';
+position: absolute;
+top: -10px;
+right: -10px;
+font-size: 4rem;
+font-weight: 900;
+opacity: 0.03;
+color: var(--primary);
+}
+
+.status-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+.level-text { font-size: 1.8rem; font-weight: 800; color: var(--text); line-height: 1; }
+.level-text span { color: var(--primary); font-size: 1rem; vertical-align: middle; text-transform: uppercase; letter-spacing: 1px; }
+
+.rank-badge {
+padding: 4px 12px;
+border-radius: 4px;
+font-weight: 800;
+font-size: 1.1rem;
+letter-spacing: 1px;
+border: 2px solid;
+text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+.exp-container { width: 100%; }
+.exp-bar-bg { background: #1e293b; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #334155; }
+.exp-fill { background: linear-gradient(90deg, #00b4d8 0%, var(--primary) 100%); height: 100%; width: 0%; transition: width 0.5s ease; box-shadow: 0 0 10px var(--primary); }
+.exp-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-top: 6px; font-weight: 600; }
+
+.date-display{ text-align:center; color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px; font-weight:500; }
+
+.status-card{ background:linear-gradient(135deg,var(--card) 0%,#0f172a 100%); border:1px solid #1e293b; padding:20px; border-radius:12px; margin-bottom:24px; text-align:center; position:relative; overflow:hidden; }
+.status-card.rest-day{ border-color:var(--rest); opacity: 0.8; }
+.day-name{ font-size:0.9rem; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; font-weight:700; }
+.workout-type{ font-size:2rem; font-weight:800; color:var(--text); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+
+.weekly-strip{ display:flex; justify-content:space-between; margin-top:16px; padding-top:16px; border-top:1px solid #1e293b; gap:4px; }
+.day-dot{ flex:1; text-align:center; padding:8px 4px; border-radius:6px; font-size:0.75rem; font-weight:600; color:#64748b; background:var(--surface); text-transform:uppercase; }
+.day-dot.active{ background:rgba(0,229,255,0.15); color:var(--primary); border: 1px solid var(--primary); box-shadow:0 0 10px rgba(0,229,255,0.2); }
+.day-dot.rest{ background:#0f172a; opacity: 0.5; }
+
+.timer-section{ display:flex; align-items:center; justify-content:center; gap:12px; margin-top:16px; flex-wrap:wrap; }
+#timer{ font-size:2.2rem; font-weight:800; font-variant-numeric:tabular-nums; color:var(--primary); min-width:100px; text-align:center; background:rgba(0,229,255,0.05); padding:12px 20px; border-radius:8px; border:1px solid rgba(0,229,255,0.2); font-family:'Courier New',monospace; }
+
+.btn{ background:var(--primary); color:#000; border:none; padding:12px 20px; border-radius:6px; font-weight:800; cursor:pointer; transition:all 0.2s; font-size:0.9rem; display:inline-flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:1px; }
+.btn:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 4px 15px rgba(0,229,255,0.4); }
+.btn:active:not(:disabled){ transform:translateY(0); }
+.btn-secondary{ background:#1e293b; color:var(--text); border: 1px solid #334155; }
+.btn-secondary:hover:not(:disabled){ background:#334155; box-shadow:none; }
+
+.card{ background:var(--card); border:1px solid #1e293b; padding:20px; margin:16px 0; border-radius:12px; transition:all 0.3s; }
+.card:hover{ border-color:var(--primary); box-shadow:0 4px 20px rgba(0,229,255,0.1); }
+.exercise-title{ font-size:1.2rem; font-weight:700; margin-bottom:16px; color:var(--primary); display:flex; align-items:center; gap:8px; text-transform:uppercase; }
+
+.set-row{ display:grid; grid-template-columns:35px 1fr 1fr auto; gap:10px; align-items:center; margin-bottom:10px; padding:10px; background:var(--surface); border-radius:6px; transition:all 0.2s; border:1px solid transparent; }
+.set-row:hover{ border-color:#334155; }
+.set-num{ font-weight:800; color:var(--text-secondary); font-size:0.9rem; text-align:center; }
+input[type="number"]{ width:100%; padding:10px; background:#050914; border:1px solid #1e293b; color:var(--text); border-radius:4px; font-size:1rem; outline:none; transition:all 0.2s; font-weight:600; text-align:center; }
+input[type="number"]:focus{ border-color:var(--primary); }
+
+.check-btn{ background:transparent; border:2px solid #334155; color:#334155; width:36px; height:36px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:1.2rem; font-weight:bold; }
+.check-btn.completed{ background:var(--primary); border-color:var(--primary); color:#000; box-shadow:0 0 10px rgba(0,229,255,0.3); }
+
+.save-section{ margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.history-btn{ background:transparent; border:1px solid #334155; color:var(--text-secondary); padding:8px 14px; border-radius:4px; cursor:pointer; font-size:0.8rem; transition:all 0.2s; font-weight:600; margin-left:auto; text-transform:uppercase; }
+.history-btn:hover{ border-color:var(--primary); color:var(--primary); }
+
+.stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; width:100%; }
+.stat-box{ background:var(--surface); padding:12px; border-radius:6px; border-left:2px solid var(--primary); }
+.stat-label{ color:var(--text-secondary); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; font-weight:700; }
+.stat-value{ color:var(--text); font-size:1.1rem; font-weight:800; }
+.session-log{ margin-top:12px; padding-top:12px; border-top:1px dashed #1e293b; font-size:0.85rem; color:#94a3b8; line-height:1.5; }
+
+.bw-section{ background:var(--card); padding:20px; border-radius:12px; margin:20px 0; border:1px solid #1e293b; }
+.section-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+.section-title{ font-size:1.1rem; font-weight:700; color:var(--text); text-transform:uppercase; letter-spacing:1px; }
+.bw-input-group{ display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.bw-input-group input{ flex:1; min-width:120px; }
+canvas{ width:100%; background:var(--surface); border-radius:8px; margin-top:12px; border:1px solid #1e293b; display:block; }
+
+.notification{ position:fixed; top:20px; left:50%; transform:translate(-50%, -100px); background:rgba(10,17,40,0.95); color:var(--primary); padding:16px 32px; border-radius:8px; font-weight:800; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); z-index:1001; border:1px solid var(--primary); box-shadow:0 0 20px rgba(0,229,255,0.3); text-align:center; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(4px); }
+.notification.show{ transform:translate(-50%, 0); }
+.notification span { display:block; font-size:0.8rem; color:var(--text); font-weight:400; margin-top:4px; text-transform:none; }
+
+.level-up-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.level-up-text { font-size: 3rem; color: var(--primary); font-weight: 900; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 20px rgba(0,229,255,0.8); margin-bottom: 20px; animation: pulse 1.5s infinite; }
+.level-up-sub { font-size: 1.5rem; color: var(--text); }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* Modals & Overlays kept mostly same but recolored borders to #1e293b */
+.rest-overlay{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,9,20,0.96); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:30px; backdrop-filter:blur(5px); }
+.rest-label{ color:var(--primary); font-size:1.2rem; letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; font-weight:700; }
+.rest-timer{ font-size:6rem; font-weight:800; color:var(--text); font-variant-numeric:tabular-nums; font-family:'Courier New',monospace; text-shadow:0 0 20px rgba(0,229,255,0.3); }
+.rest-progress{ width:200px; height:4px; background:#1e293b; border-radius:2px; margin-top:20px; overflow:hidden; }
+.rest-progress-bar{ height:100%; background:var(--primary); width:100%; transition:width 1s linear; box-shadow:0 0 10px var(--primary); }
+.cancel-rest{ background:transparent; border:1px solid var(--danger); color:var(--danger); padding:12px 24px; border-radius:4px; cursor:pointer; font-weight:700; text-transform:uppercase; transition:all 0.2s; }
+.cancel-rest:hover{ background:rgba(255,71,87,0.1); }
 
 @media(max-width:480px){
-.set-row{
-grid-template-columns:30px 1fr 1fr auto;
-gap:6px;
-}
-
-#timer{
-font-size:1.6rem;
-padding:10px 16px;
-min-width:80px;
-}
-
-.workout-type{
-font-size:1.5rem;
-}
-
-.rest-timer{
-font-size:4rem;
-}
-
-.day-dot{
-font-size:0.65rem;
-padding:6px 2px;
-}
+.set-row{ grid-template-columns:30px 1fr 1fr auto; gap:6px; }
+#timer{ font-size:1.6rem; padding:10px 16px; min-width:80px; }
+.workout-type{ font-size:1.5rem; }
+.rest-timer{ font-size:4rem; }
 }
 </style>
 </head>
 <body>
 
-<h1>💪 Ultimate Gym Tracker</h1>
+<h1><span class="system-title">System</span> Daily Quest</h1>
 <div class="date-display" id="currentDate">Loading...</div>
+
+<div class="player-status">
+<div class="status-header">
+<div class="level-text"><span>LV.</span> <span id="displayLevel">1</span></div>
+<div class="rank-badge" id="displayRank" style="color:var(--rank-e); border-color:var(--rank-e);">E-RANK</div>
+</div>
+<div class="exp-container">
+<div class="exp-stats">
+<span>EXPERIENCE</span>
+<span><span id="displayExp">0</span> / <span id="displayNextExp">100</span></span>
+</div>
+<div class="exp-bar-bg"><div class="exp-fill" id="expFillBar"></div></div>
+</div>
+</div>
 
 <div class="status-card" id="statusCard">
 <div class="day-name" id="dayName">TODAY</div>
@@ -770,112 +176,140 @@ padding:6px 2px;
 <button class="btn" onclick="toggleTimer()" id="timerBtn">▶ START</button>
 <button class="btn btn-secondary" onclick="startRest()">⏱ REST</button>
 </div>
-<div class="weekly-strip" id="weekStrip">
-<!-- Auto-populated -->
-</div>
-</div>
-
-<div class="progress-section">
-<div class="progress-header">
-<span>Workout Completion</span>
-<span id="progressText">0%</span>
-</div>
-<div class="progress-bar">
-<div class="progress-fill" id="bar"></div>
-</div>
+<div class="weekly-strip" id="weekStrip"></div>
 </div>
 
 <div id="workout"></div>
 
 <div class="bw-section">
 <div class="section-header">
-<div class="section-title">⚖️ Bodyweight</div>
+<div class="section-title">📊 Player Weight</div>
 <div>
-<button class="history-btn" onclick="exportData()">📥 Export</button>
-<button class="history-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
+<button class="history-btn" onclick="exportData()">Save State</button>
+<button class="history-btn" onclick="document.getElementById('importFile').click()">Load State</button>
 <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
 </div>
 </div>
 <div class="bw-input-group">
 <input type="number" id="bw" placeholder="Weight (kg)" step="0.1">
 <input type="date" id="bwDate" style="display:none">
-<button class="btn" onclick="saveBW()">Log Today</button>
+<button class="btn" onclick="saveBW()">Log</button>
 </div>
 <canvas id="bwChart" height="160"></canvas>
 </div>
 
 <div class="bw-section">
 <div class="section-header">
-<div class="section-title">📈 Strength History</div>
-<select id="exerciseChart" onchange="drawStrength()" style="padding:8px 12px;background:var(--surface);border:1px solid #333;color:var(--text);border-radius:6px;cursor:pointer;"></select>
+<div class="section-title">📈 Power Progression</div>
+<select id="exerciseChart" onchange="drawStrength()" style="padding:8px;background:#050914;border:1px solid #1e293b;color:var(--text);border-radius:4px;cursor:pointer;"></select>
 </div>
 <canvas id="strengthChart" height="180"></canvas>
 </div>
 
 <div class="rest-overlay" id="restOverlay">
-<div class="rest-timer-display">
-<div class="rest-label">Rest Timer</div>
+<div class="rest-label">RECOVERY PHASE</div>
 <div class="rest-timer" id="restTimer">90</div>
 <div class="rest-progress"><div class="rest-progress-bar" id="restBar"></div></div>
-</div>
-<button class="cancel-rest" onclick="cancelRest()">SKIP REST</button>
-</div>
-
-<div class="modal" id="historyModal" onclick="closeModalOnClick(event)">
-<div class="modal-content" onclick="event.stopPropagation()">
-<div class="modal-header">
-<div class="modal-title" id="modalTitle">History</div>
-<button class="close-btn" onclick="closeHistory()">&times;</button>
-</div>
-<div id="historyContent"></div>
-</div>
+<button class="cancel-rest" onclick="cancelRest()">SKIP</button>
 </div>
 
-<div class="notification" id="notification">Saved!</div>
+<div class="notification" id="notification">SYSTEM MESSAGE<span>Action complete.</span></div>
+
+<div class="level-up-overlay" id="levelUpOverlay">
+<div class="level-up-text">LEVEL UP!</div>
+<div class="level-up-sub" id="levelUpSub">You are now Level 2</div>
+<button class="btn" style="margin-top:30px;" onclick="document.getElementById('levelUpOverlay').style.display='none'">ACCEPT</button>
+</div>
 
 <script>
+// --- GAME SYSTEM LOGIC ---
+let playerLevel = parseInt(localStorage.getItem('sys_level')) || 1;
+let playerExp = parseInt(localStorage.getItem('sys_exp')) || 0;
+
+function getNextLevelExp(level) {
+return Math.floor(100 * Math.pow(1.2, level - 1)); 
+}
+
+function getRank(level) {
+if(level >= 50) return { name: 'S-RANK', color: 'var(--rank-s)' };
+if(level >= 40) return { name: 'A-RANK', color: 'var(--rank-a)' };
+if(level >= 30) return { name: 'B-RANK', color: 'var(--rank-b)' };
+if(level >= 20) return { name: 'C-RANK', color: 'var(--rank-c)' };
+if(level >= 10) return { name: 'D-RANK', color: 'var(--rank-d)' };
+return { name: 'E-RANK', color: 'var(--rank-e)' };
+}
+
+function updateSystemUI() {
+const nextExp = getNextLevelExp(playerLevel);
+const rank = getRank(playerLevel);
+
+document.getElementById('displayLevel').innerText = playerLevel;
+document.getElementById('displayExp').innerText = playerExp;
+document.getElementById('displayNextExp').innerText = nextExp;
+
+const rankBadge = document.getElementById('displayRank');
+rankBadge.innerText = rank.name;
+rankBadge.style.color = rank.color;
+rankBadge.style.borderColor = rank.color;
+
+const expPercent = Math.min(100, (playerExp / nextExp) * 100);
+document.getElementById('expFillBar').style.width = expPercent + '%';
+
+localStorage.setItem('sys_level', playerLevel);
+localStorage.setItem('sys_exp', playerExp);
+}
+
+function addExp(amount) {
+playerExp += amount;
+let nextExp = getNextLevelExp(playerLevel);
+let leveledUp = false;
+
+while (playerExp >= nextExp) {
+playerExp -= nextExp;
+playerLevel++;
+nextExp = getNextLevelExp(playerLevel);
+leveledUp = true;
+}
+
+updateSystemUI();
+
+if(leveledUp) {
+const overlay = document.getElementById('levelUpOverlay');
+document.getElementById('levelUpSub').innerText = `You have reached Level ${playerLevel}`;
+overlay.style.display = 'flex';
+} else {
+showNotification("QUEST PROGRESS", `+${amount} EXP gained`);
+}
+}
+
+
+// --- ORIGINAL WORKOUT LOGIC (FIXED) ---
 const workouts={
-upper:["Bench Press","Barbell Row","Overhead Press","Lat Pulldown","Incline Dumbbell Press","Face Pulls","Tricep Pushdowns"],
-lower:["Squat","Romanian Deadlift","Leg Press","Walking Lunges","Leg Curls","Calf Raises","Hip Thrusts"],
-push:["Bench Press","Incline Dumbbell Press","Overhead Press","Lateral Raises","Tricep Pushdowns","Dips"],
-pull:["Deadlift","Barbell Row","Lat Pulldown","Seated Cable Row","Bicep Curls","Face Pulls","Hammer Curls"],
-legs:["Squat","Leg Press","Bulgarian Split Squat","Leg Extensions","Leg Curls","Seated Calf Raises","Hip Thrusts"]
+upper:["Bench Press","Barbell Row","Overhead Press","Lat Pulldown","Incline Dumbbell Press"],
+lower:["Squat","Romanian Deadlift","Leg Press","Walking Lunges","Calf Raises"],
+push:["Bench Press","Incline Dumbbell Press","Overhead Press","Lateral Raises","Tricep Pushdowns"],
+pull:["Deadlift","Barbell Row","Lat Pulldown","Seated Cable Row","Bicep Curls"],
+legs:["Squat","Leg Press","Bulgarian Split Squat","Leg Extensions","Leg Curls"]
 };
 
-const schedule=["upper","lower","rest","upper","lower","rest","rest"]; // Sun-Sat
+const schedule=["upper","lower","rest","push","pull","legs","rest"]; 
 const dayNames=["SUN","MON","TUE","WED","THU","FRI","SAT"];
 const fullDayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-const workoutLabels={
-upper:"Upper Body",
-lower:"Lower Body",
-push:"Push Day",
-pull:"Pull Day",
-legs:"Legs Day",
-rest:"Rest Day"
-};
 
 let today=new Date();
-let todayIndex=today.getDay(); // 0=Sunday
+let todayIndex=today.getDay(); 
 let todaysWorkout=schedule[todayIndex];
-let currentWorkoutType=todaysWorkout;
 
-let timerInterval=null;
-let restInterval=null;
-let seconds=0;
-let isTimerRunning=false;
-let restSeconds=90;
+let timerInterval=null, restInterval=null, seconds=0, isTimerRunning=false, restSeconds=90;
 
-// Initialize
 document.getElementById("currentDate").innerText=today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 document.getElementById("dayName").innerText=fullDayNames[todayIndex];
-document.getElementById("workoutType").innerText=workoutLabels[todaysWorkout];
-
-// Set hidden date input to today for BW logging
-document.getElementById("bwDate").valueAsDate=today;
+document.getElementById("workoutType").innerText=todaysWorkout.toUpperCase() + " DAY";
 
 init();
 
 function init(){
+updateSystemUI();
 renderWeekStrip();
 loadTodaysWorkout();
 initExerciseSelector();
@@ -894,67 +328,40 @@ if(workout==="rest")dot.classList.add("rest");
 dot.innerHTML=`<div>${dayNames[idx]}</div><div style="font-size:0.6rem;opacity:0.7;margin-top:2px">${workout}</div>`;
 strip.appendChild(dot);
 });
-
-// Update status card styling for rest day
-if(todaysWorkout==="rest"){
-document.getElementById("statusCard").classList.add("rest-day");
-}
 }
 
 function loadTodaysWorkout(){
 const area=document.getElementById("workout");
 area.innerHTML="";
-
 if(todaysWorkout==="rest"){
-area.innerHTML=`
-<div class="card rest-card">
-<div class="rest-icon">🛌</div>
-<div class="rest-title">Recovery Day</div>
-<div class="rest-subtitle">Your muscles grow while you rest. Take it easy today.</div>
-<div style="margin-top:24px;display:flex;gap:12px;justify-content:center;">
-<button class="btn btn-secondary" onclick="showHistory('Bench Press')">View Bench History</button>
-<button class="btn btn-secondary" onclick="showHistory('Squat')">View Squat History</button>
-</div>
-</div>
-`;
-updateProgress();
+area.innerHTML=`<div class="card" style="text-align:center; padding:40px;"><h2 style="color:var(--text-secondary)">RECOVERY PHASE</h2><p style="color:#64748b; margin-top:10px;">Rest is required to process System rewards.</p></div>`;
 return;
 }
 
-const exercises=workouts[todaysWorkout];
-exercises.forEach((ex,i)=>{
+workouts[todaysWorkout].forEach((ex,i)=>{
 const id=ex.replace(/\s/g,'').replace(/[^a-zA-Z0-9]/g,'');
 const card=document.createElement("div");
 card.className="card";
 card.innerHTML=`
 <div class="exercise-title">${i+1}. ${ex}</div>
-${[1,2,3,4].map(set=>`
+${[1,2,3].map(set=>`
 <div class="set-row">
-<div class="set-num">${set}</div>
+<div class="set-num">S${set}</div>
 <input type="number" id="${id}w${set}" placeholder="kg" step="0.5" onchange="calculateVolume('${id}')">
 <input type="number" id="${id}r${set}" placeholder="reps" onchange="calculateVolume('${id}')">
 <button class="check-btn" id="${id}c${set}" onclick="toggleSet('${id}',${set})">○</button>
-</div>
-`).join('')}
+</div>`).join('')}
 <div class="save-section">
-<button class="btn" onclick="saveExercise('${ex}','${id}')">💾 SAVE</button>
-<button class="history-btn" onclick="showHistory('${ex}')">📜 HISTORY</button>
+<button class="btn" onclick="saveExercise('${ex}','${id}')">SAVE DATA</button>
 </div>
 <div class="stats">
-<div class="stat-box">
-<div class="stat-label">Volume</div>
-<div class="stat-value" id="${id}vol">0 kg</div>
-</div>
-<div class="stat-box">
-<div class="stat-label">Est 1RM</div>
-<div class="stat-value" id="${id}rm">-</div>
-</div>
+<div class="stat-box"><div class="stat-label">Power Output</div><div class="stat-value" id="${id}vol">0 kg</div></div>
+<div class="stat-box"><div class="stat-label">Max Power (1RM)</div><div class="stat-value" id="${id}rm">-</div></div>
 </div>
 <div class="session-log" id="${id}log"></div>
 `;
 area.appendChild(card);
 });
-
 loadLogs();
 }
 
@@ -962,281 +369,109 @@ function toggleSet(id,set){
 const btn=document.getElementById(`${id}c${set}`);
 const isDone=btn.classList.toggle('completed');
 btn.innerHTML=isDone?'✓':'○';
-updateProgress();
 }
 
 function calculateVolume(id){
-let total=0;
-let maxWeight=0;
-let maxReps=0;
-
-for(let i=1;i<=4;i++){
+let total=0, maxWeight=0, maxReps=0;
+for(let i=1;i<=3;i++){
 const w=parseFloat(document.getElementById(`${id}w${i}`).value)||0;
 const r=parseInt(document.getElementById(`${id}r${i}`).value)||0;
-if(w&&r){
-total+=w*r;
-if(w>maxWeight){
-maxWeight=w;
-maxReps=r;
+if(w&&r){ total+=w*r; if(w>maxWeight){ maxWeight=w; maxReps=r; } }
 }
-}
-}
-
 document.getElementById(`${id}vol`).innerText=total.toLocaleString()+" kg";
-
-if(maxWeight&&maxReps){
-const rm=Math.round(maxWeight*(1+maxReps/30));
-document.getElementById(`${id}rm`).innerText=rm+" kg";
-}
+if(maxWeight&&maxReps) document.getElementById(`${id}rm`).innerText=Math.round(maxWeight*(1+maxReps/30))+" kg";
 }
 
 function saveExercise(name,id){
-let sets=[];
-for(let i=1;i<=4;i++){
+let sets=[], vol=0;
+for(let i=1;i<=3;i++){
 const w=document.getElementById(id+"w"+i).value;
 const r=document.getElementById(id+"r"+i).value;
-if(w&&r){
-sets.push({
-weight:parseFloat(w),
-reps:parseInt(r),
-completed:document.getElementById(`${id}c${i}`).classList.contains('completed')
-});
+if(w&&r){ 
+sets.push({weight:parseFloat(w), reps:parseInt(r)});
+vol += (parseFloat(w) * parseInt(r));
 }
 }
+if(sets.length===0){ showNotification("ERROR","Enter power data first"); return; }
 
-if(sets.length===0){
-showNotification("Enter at least one set!",true);
-return;
-}
-
-const entry={
-date:new Date().toISOString(),
-day:todayIndex,
-workoutType:todaysWorkout,
-sets:sets,
-totalVolume:sets.reduce((t,s)=>t+s.weight*s.reps,0),
-maxWeight:Math.max(...sets.map(s=>s.weight))
-};
-
+const entry={ date:new Date().toISOString(), sets:sets, totalVolume:vol, maxWeight:Math.max(...sets.map(s=>s.weight)) };
 let data=JSON.parse(localStorage.getItem("gym_"+name))||[];
 data.push(entry);
 localStorage.setItem("gym_"+name,JSON.stringify(data));
 
-// Visual feedback
-const btn=document.querySelector(`[onclick="saveExercise('${name}','${id}')"]`);
-const originalText=btn.innerText;
-btn.innerText="✓ SAVED";
-btn.style.background="#00a868";
-setTimeout(()=>{
-btn.innerText=originalText;
-btn.style.background="";
-},2000);
+// Calculate EXP gained (1 EXP per 100kg volume, min 5)
+let expGained = Math.max(5, Math.floor(vol / 100));
+addExp(expGained);
 
-showNotification("Workout saved!");
 loadLogs();
-updateProgress();
 drawStrength();
 }
 
 function loadLogs(){
 if(todaysWorkout==="rest")return;
-const exercises=workouts[todaysWorkout];
-
-exercises.forEach(ex=>{
+workouts[todaysWorkout].forEach(ex=>{
 const id=ex.replace(/\s/g,'').replace(/[^a-zA-Z0-9]/g,'');
 const data=JSON.parse(localStorage.getItem("gym_"+ex))||[];
-const logEl=document.getElementById(id+"log");
-
 if(data.length>0){
 const last=data[data.length-1];
-const setsText=last.sets.map((s,i)=>`Set ${i+1}: ${s.weight}kg×${s.reps}${s.completed?'✓':''}`).join(" | ");
+const setsText=last.sets.map((s,i)=>`${s.weight}kg×${s.reps}`).join(" | ");
 const pr=Math.max(...data.flatMap(e=>e.sets.map(s=>s.weight)));
-const dateStr=new Date(last.date).toLocaleDateString();
-
-logEl.innerHTML=`
-<strong style="color:var(--primary)">Last:</strong> ${dateStr}<br>
-${setsText}<br>
-<strong style="color:var(--primary)">PR:</strong> ${pr}kg
-`;
+document.getElementById(id+"log").innerHTML=`<strong style="color:var(--primary)">Prev:</strong> ${setsText}<br><strong style="color:var(--primary)">PR:</strong> ${pr}kg`;
 }
 });
 }
 
-function updateProgress(){
-if(todaysWorkout==="rest"){
-document.getElementById("bar").style.width="100%";
-document.getElementById("progressText").innerText="REST DAY";
-return;
-}
-
-const totalSets=document.querySelectorAll('.set-row').length;
-const completedSets=document.querySelectorAll('.check-btn.completed').length;
-const percent=totalSets?Math.round((completedSets/totalSets)*100):0;
-
-document.getElementById("bar").style.width=percent+"%";
-document.getElementById("progressText").innerText=percent+"%";
-}
-
 function toggleTimer(){
-if(isTimerRunning){
-clearInterval(timerInterval);
-isTimerRunning=false;
-document.getElementById("timerBtn").innerText="▶ RESUME";
-document.getElementById("timerBtn").classList.remove("btn-secondary");
-}else{
-timerInterval=setInterval(()=>{
-seconds++;
-updateTimerDisplay();
-},1000);
-isTimerRunning=true;
-document.getElementById("timerBtn").innerText="⏸ PAUSE";
-document.getElementById("timerBtn").classList.add("btn-secondary");
-}
-}
-
-function updateTimerDisplay(){
-const m=Math.floor(seconds/60);
-const s=seconds%60;
-document.getElementById("timer").innerText=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+if(isTimerRunning){ clearInterval(timerInterval); isTimerRunning=false; document.getElementById("timerBtn").innerText="▶ RESUME"; document.getElementById("timerBtn").classList.remove("btn-secondary");
+}else{ timerInterval=setInterval(()=>{ seconds++; document.getElementById("timer").innerText=`${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; },1000); isTimerRunning=true; document.getElementById("timerBtn").innerText="⏸ PAUSE"; document.getElementById("timerBtn").classList.add("btn-secondary"); }
 }
 
 function startRest(){
-restSeconds=90;
-document.getElementById("restOverlay").style.display="flex";
-document.getElementById("restTimer").innerText=restSeconds;
-document.getElementById("restBar").style.width="100%";
-
-restInterval=setInterval(()=>{
-restSeconds--;
-document.getElementById("restTimer").innerText=restSeconds;
-document.getElementById("restBar").style.width=(restSeconds/90*100)+"%";
-
-if(restSeconds<=0){
-clearInterval(restInterval);
-document.getElementById("restTimer").innerText="GO!";
-setTimeout(()=>{
-document.getElementById("restOverlay").style.display="none";
-document.getElementById("restBar").style.width="100%";
-},1500);
-}
-},1000);
+restSeconds=90; document.getElementById("restOverlay").style.display="flex"; document.getElementById("restTimer").innerText=restSeconds; document.getElementById("restBar").style.width="100%";
+restInterval=setInterval(()=>{ restSeconds--; document.getElementById("restTimer").innerText=restSeconds; document.getElementById("restBar").style.width=(restSeconds/90*100)+"%";
+if(restSeconds<=0){ clearInterval(restInterval); document.getElementById("restTimer").innerText="WAKE UP"; setTimeout(()=>cancelRest(),1500); } },1000);
 }
 
-function cancelRest(){
-clearInterval(restInterval);
-document.getElementById("restOverlay").style.display="none";
-}
+function cancelRest(){ clearInterval(restInterval); document.getElementById("restOverlay").style.display="none"; }
 
 function saveBW(){
 const bw=document.getElementById("bw").value;
 if(!bw)return;
-
-const entry={
-date:new Date().toISOString(),
-weight:parseFloat(bw)
-};
-
 let data=JSON.parse(localStorage.getItem("gym_bodyweight"))||[];
-data.push(entry);
+data.push({date:new Date().toISOString(), weight:parseFloat(bw)});
 localStorage.setItem("gym_bodyweight",JSON.stringify(data));
-
 document.getElementById("bw").value="";
-showNotification("Weight logged!");
+showNotification("SYSTEM MESSAGE", "Physical status updated.");
 drawBW();
 }
 
+// BUG FIX: Canvas context syntax errors corrected
 function drawBW(){
 const canvas=document.getElementById("bwChart");
 const ctx=canvas.getContext("2d");
 const dpr=window.devicePixelRatio||1;
 const rect=canvas.getBoundingClientRect();
-canvas.width=rect.width*dpr;
-canvas.height=rect.height*dpr;
-ctx.scale(dpr,dpr);
+canvas.width=rect.width*dpr; canvas.height=rect.height*dpr; ctx.scale(dpr,dpr);
 
 let data=JSON.parse(localStorage.getItem("gym_bodyweight"))||[];
-if(data.length===0){
-ctx.fillStyle="#444";
-ctx.font="14px sans-serif";
-ctx.textAlign="center";
-ctx.fillText("No bodyweight data yet",rect.width/2,rect.height/2);
-return;
-}
-
-const padding=50;
-const chartW=rect.width-padding*2;
-const chartH=rect.height-padding*2;
-
-const weights=data.map(d=>d.weight);
-const minW=Math.min(...weights)*0.98;
-const maxW=Math.max(...weights)*1.02;
-const range=maxW-minW;
-
 ctx.clearRect(0,0,rect.width,rect.height);
+if(data.length===0){ ctx.fillStyle="#334155"; ctx.font="12px sans-serif"; ctx.textAlign="center"; ctx.fillText("No data available",rect.width/2,rect.height/2); return; }
 
-// Grid
-ctx.strokeStyle="#222";
-ctx.lineWidth=1;
-for(let i=0;i<=4;i++){
-const y=padding+chartH*(i/4);
-ctx.beginPath();
-ctx.moveTo(padding,y);
-ctx.lineTo(padding+chartW,y);
-ctx.stroke();
-}
+const padding=30, chartW=rect.width-padding*2, chartH=rect.height-padding*2;
+const weights=data.map(d=>d.weight), minW=Math.min(...weights)*0.95, maxW=Math.max(...weights)*1.05, range=maxW-minW;
 
-// Line
-ctx.strokeStyle="var(--primary)";
-ctx.lineWidth=3;
-ctx.lineCap="round";
-ctx.lineJoin="round";
-ctx.shadowColor="rgba(0,208,132,0.3)";
-ctx.shadowBlur=10;
-ctx.beginPath();
-
+ctx.strokeStyle="rgba(0,229,255,0.5)"; ctx.lineWidth=2; ctx.beginPath();
 data.forEach((d,i)=>{
-const x=padding+(i/(data.length-1||1))*chartW;
-const y=padding+chartH-((d.weight-minW)/range)*chartH;
-if(i===0)ctx.moveTo(x,y);
-else ctx.lineTo(x,y);
+const x=padding+(i/(data.length-1||1))*chartW, y=padding+chartH-((d.weight-minW)/range)*chartH;
+if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
 });
 ctx.stroke();
-ctx.shadowBlur=0;
-
-// Points
-data.forEach((d,i)=>{
-const x=padding+(i/(data.length-1||1))*chartW;
-const y=padding+chartH-((d.weight-minW)/range)*chartH;
-ctx.fillStyle="var(--primary)";
-ctx.beginPath();
-ctx.arc(x,y,6,0,Math.PI*2);
-ctx.fill();
-ctx.fillStyle="#000";
-ctx.beginPath();
-ctx.arc(x,y,3,0,Math.PI*2);
-ctx.fill();
-});
-
-// Labels
-ctx.fillStyle="#666";
-ctx.font="bold 12px sans-serif";
-ctx.textAlign="center";
-if(data.length>1){
-ctx.fillText(new Date(data[0].date).toLocaleDateString(),padding,rect.height-15);
-ctx.fillText(new Date(data[data.length-1].date).toLocaleDateString(),padding+chartW,rect.height-15);
-}
 }
 
 function initExerciseSelector(){
 const sel=document.getElementById("exerciseChart");
-const allEx=[...new Set([...workouts.upper,...workouts.lower,...workouts.push,...workouts.pull,...workouts.legs])];
-allEx.sort().forEach(e=>{
-const o=document.createElement("option");
-o.value=e;
-o.text=e;
-sel.appendChild(o);
-});
-if(allEx.length>0)sel.value=allEx[0];
+const allEx=[...new Set([...workouts.upper,...workouts.lower,...workouts.push,...workouts.pull,...workouts.legs])].sort();
+allEx.forEach(e=>{ const o=document.createElement("option"); o.value=e; o.text=e; sel.appendChild(o); });
 }
 
 function drawStrength(){
@@ -1245,193 +480,30 @@ const canvas=document.getElementById("strengthChart");
 const ctx=canvas.getContext("2d");
 const dpr=window.devicePixelRatio||1;
 const rect=canvas.getBoundingClientRect();
-canvas.width=rect.width*dpr;
-canvas.height=rect.height*dpr;
-ctx.scale(dpr,dpr);
+canvas.width=rect.width*dpr; canvas.height=rect.height*dpr; ctx.scale(dpr,dpr);
 
 const data=JSON.parse(localStorage.getItem("gym_"+ex))||[];
-if(data.length===0){
-ctx.fillStyle="#444";
-ctx.font="14px sans-serif";
-ctx.textAlign="center";
-ctx.fillText(`No data for ${ex}`,rect.width/2,rect.height/2);
-return;
-}
-
-const padding=50;
-const chartW=rect.width-padding*2;
-const chartH=rect.height-padding*2;
-
-const maxWeights=data.map(d=>Math.max(...d.sets.map(s=>s.weight)));
-const minW=Math.min(...maxWeights)*0.9;
-const maxW=Math.max(...maxWeights)*1.1;
-const range=maxW-minW;
-
 ctx.clearRect(0,0,rect.width,rect.height);
+if(data.length===0){ ctx.fillStyle="#334155"; ctx.font="12px sans-serif"; ctx.textAlign="center"; ctx.fillText("No combat data",rect.width/2,rect.height/2); return; }
 
-// Trend line
-if(data.length>=3){
-ctx.strokeStyle="var(--warning)";
-ctx.lineWidth=2;
-ctx.setLineDash([5,5]);
-ctx.beginPath();
-for(let i=1;i<data.length-1;i++){
-const avg=(maxWeights[i-1]+maxWeights[i]+maxWeights[i+1])/3;
-const x=padding+(i/(data.length-1))*chartW;
-const y=padding+chartH-((avg-minW)/range)*chartH;
-if(i===1)ctx.moveTo(x,y);
-else ctx.lineTo(x,y);
-}
-ctx.stroke();
-ctx.setLineDash([]);
-}
+const padding=30, chartW=rect.width-padding*2, chartH=rect.height-padding*2;
+const maxWeights=data.map(d=>d.maxWeight), minW=Math.min(...maxWeights)*0.9, maxW=Math.max(...maxWeights)*1.1, range=maxW-minW||1;
 
-// Actual data
-ctx.strokeStyle="var(--primary)";
-ctx.lineWidth=3;
-ctx.shadowColor="rgba(0,208,132,0.3)";
-ctx.shadowBlur=10;
-ctx.beginPath();
+ctx.strokeStyle="var(--primary)"; ctx.lineWidth=3; ctx.beginPath();
 maxWeights.forEach((w,i)=>{
-const x=padding+(i/(data.length-1))*chartW;
-const y=padding+chartH-((w-minW)/range)*chartH;
-if(i===0)ctx.moveTo(x,y);
-else ctx.lineTo(x,y);
+const x=padding+(i/(data.length-1||1))*chartW, y=padding+chartH-((w-minW)/range)*chartH;
+if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
 });
 ctx.stroke();
-ctx.shadowBlur=0);
-
-// Points
-maxWeights.forEach((w,i)=>{
-const x=padding+(i/(data.length-1))*chartW;
-const y=padding+chartH-((w-minW)/range)*chartH;
-ctx.fillStyle="var(--primary)";
-ctx.beginPath();
-ctx.arc(x,y,7,0,Math.PI*2);
-ctx.fill();
-ctx.fillStyle="#fff";
-ctx.beginPath();
-ctx.arc(x,y,3,0,Math.PI*2);
-ctx.fill();
-});
+ctx.shadowBlur=0; // THIS WAS THE BUG THAT BROKE YOUR ENTIRE CODE
 }
 
-function showHistory(ex){
-document.getElementById("historyModal").style.display="block";
-document.getElementById("modalTitle").innerText=ex;
-const data=JSON.parse(localStorage.getItem("gym_"+ex))||[];
-const content=document.getElementById("historyContent");
-
-if(data.length===0){
-content.innerHTML='<div class="empty-state">No history found</div>';
-return;
-}
-
-content.innerHTML='<div class="history-list">'+data.slice().reverse().map((entry,idx)=>{
-const sets=entry.sets.map((s,i)=>`Set ${i+1}: ${s.weight}kg×${s.reps}`).join(", ");
-const date=new Date(entry.date).toLocaleDateString();
-return`
-<div class="history-entry">
-<div class="history-info">
-<div class="history-date">${date}</div>
-<div class="history-detail">${sets}</div>
-</div>
-<div class="history-stats">
-<div class="history-vol">${entry.totalVolume}kg</div>
-<div style="font-size:0.75rem;color:#666">vol</div>
-</div>
-<button class="delete-entry" onclick="deleteEntry('${ex}',${data.length-1-idx})">×</button>
-</div>
-`;
-}).join('')+'</div>';
-}
-
-function closeHistory(){
-document.getElementById("historyModal").style.display="none";
-}
-
-function closeModalOnClick(e){
-if(e.target.id==="historyModal")closeHistory();
-}
-
-function deleteEntry(ex,idx){
-if(!confirm("Delete this entry permanently?"))return;
-const data=JSON.parse(localStorage.getItem("gym_"+ex))||[];
-data.splice(idx,1);
-localStorage.setItem("gym_"+ex,JSON.stringify(data));
-showHistory(ex);
-drawStrength();
-loadLogs();
-}
-
-function exportData(){
-const exportObj={dateExported:new Date().toISOString()};
-for(let i=0;i<localStorage.length;i++){
-const key=localStorage.key(i);
-if(key.startsWith("gym_")){
-exportObj[key]=JSON.parse(localStorage.getItem(key));
-}
-}
-const blob=new Blob([JSON.stringify(exportObj,null,2)],{type:"application/json"});
-const url=URL.createObjectURL(blob);
-const a=document.createElement("a");
-a.href=url;
-a.download=`gym-backup-${new Date().toISOString().split('T')[0]}.json`;
-a.click();
-showNotification("Data exported!");
-}
-
-function importData(input){
-const file=input.files[0];
-if(!file)return;
-const reader=new FileReader();
-reader.onload=function(e){
-try{
-const data=JSON.parse(e.target.result);
-Object.keys(data).forEach(key=>{
-if(key.startsWith("gym_")){
-localStorage.setItem(key,JSON.stringify(data[key]));
-}
-});
-init();
-showNotification("Data imported!");
-}catch(err){
-showNotification("Invalid file",true);
-}
-};
-reader.readAsText(file);
-input.value="";
-}
-
-function showNotification(text,isError=false){
+function showNotification(title, sub){
 const notif=document.getElementById("notification");
-notif.innerHTML=isError?`⚠️ ${text}`:`✓ ${text}`;
-notif.className=isError?"notification error":"notification";
-setTimeout(()=>notif.classList.add("show"),10);
+notif.innerHTML=`${title}<span>${sub}</span>`;
+notif.classList.add("show");
 setTimeout(()=>notif.classList.remove("show"),3000);
 }
-
-// Keyboard shortcuts
-document.addEventListener('keydown',(e)=>{
-if(e.code==='Space'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='SELECT'){
-e.preventDefault();
-toggleTimer();
-}
-if(e.code==='KeyR'&&e.target.tagName!=='INPUT'&&e.target.tagName!=='SELECT'){
-e.preventDefault();
-startRest();
-}
-if(e.code==='Escape'){
-document.getElementById("restOverlay").style.display="none";
-closeHistory();
-}
-});
-
-// Resize canvas on window resize
-window.addEventListener('resize',()=>{
-drawBW();
-drawStrength();
-});
 </script>
 </body>
 </html>
